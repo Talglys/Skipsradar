@@ -586,16 +586,21 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 		switch (item.getItemId()) {
 		/* Data sources */
 		case 1:
+			/*
 			if (!getDataView().isLauncherStarted()) {
 				//Intent intent = new Intent(MixView.this, DataSourceList.class);
 				//Andreas: Changed 11.09.13 11:30
-				Intent intent = new Intent(MixView.this, TestList.class);
+				Intent intent = new Intent(MixView.this, DataSourceList.class);
 				startActivityForResult(intent, 40);
-			} else {
-				Toast.makeText(this, getString(R.string.no_website_available),
+			} else { //R.string.no_website_available
+				Toast.makeText(this, "Testingstuff",
 						Toast.LENGTH_LONG).show();
 			}
+			*/
+			Intent intent = new Intent(MixView.this, TestList.class);
+			startActivityForResult(intent, 40);
 			break;
+			
 		/* List view */
 		case 2:
 			/*
