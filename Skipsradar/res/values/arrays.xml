@@ -14,4 +14,7 @@
 	    <item>OpenStreetmap|http://open.mapquestapi.com/xapi/api/0.6/node[railway=station]|3|1|true</item>
 	    <item>Own URL|http://mixare.org/geotest.php|4|0|false</item>
 	</string-array>
+	<string-array name="defaultachievements">
+	    <item >Achi01|Test|Testing that this works|nrProg|5</item>
+	</string-array>
 </resources>
