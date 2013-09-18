@@ -68,5 +68,15 @@ public class nrProgAchievement extends Achievement {
 	public int getStatus(){
 		return status;
 	}
+	
+	@Override
+	public String getCompletionStatus() {
+		if(this.getCompleted()){
+			return "true|" + status;
+		}
+		else{
+			return "false|" + status;
+		}
+	}
 
 }

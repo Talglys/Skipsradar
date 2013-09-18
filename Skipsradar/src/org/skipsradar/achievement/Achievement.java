@@ -68,4 +68,13 @@ public class Achievement {
 	public boolean getCompleted(){
 		return complete;
 	}
+	
+	public String getCompletionStatus() {
+		if(complete){
+			return "true";
+		}
+		else{
+			return "false";
+		}
+	}
 }

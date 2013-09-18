@@ -1,5 +1,7 @@
 package org.skipsradar.achievement;
 
+import java.util.ArrayList;
+
 import org.mixare.R;
 
 import android.app.ListActivity;
@@ -9,10 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class AchievementView extends ListActivity {
-		
+	
+	public static final String SHARED_PREFS = "AchievementPrefs";
 	private static AchievementAdapter adapter;
 	
 	/** Called when the activity is first created. */
@@ -20,64 +25,102 @@ public class AchievementView extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-		adapter = new AchievementAdapter();
-		setListAdapter(adapter);
 
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
+		adapter = new AchievementAdapter();
+		adapter.setAchievements(AchievementStorage.getInstance().getAchievements());
+		setListAdapter(adapter);
 	}
 	
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
+		
+		AchievementStorage.getInstance().storeAchievements(adapter.getAchievementSet());
 	}
 	
 	private class AchievementAdapter extends BaseAdapter{
 		
-		TextView item;
+		TextView item; //TODO: Remove this, when safe
 		private LayoutInflater mInflater;
+		private ArrayList<Achievement> achi;
 
 		public AchievementAdapter() {
 			mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			achi = new ArrayList<Achievement>();
+		}
+		
+		/**
+		 * Sets the current achievements to be the ones provided in the
+		 * ArrayList
+		 * @param achi
+		 */
+		public void setAchievements(ArrayList<Achievement> achi){
+			this.achi = achi;
+		}
+		
+		public ArrayList<Achievement> getAchievementSet(){
+			return achi;
+		}
+		
+		public void addAchievement(Achievement a){
+			achi.add(a);
 		}
 
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
-			return 1;
+			return achi.size();
 		}
 
 		@Override
 		public Object getItem(int arg0) {
 			// TODO Auto-generated method stub
-			return item;
+			return achi.get(arg0);
 		}
 
 		@Override
 		public long getItemId(int arg0) {
 			// TODO Auto-generated method stub
-			return 1;
+			return arg0;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder = null;
 			
 			if (convertView==null) {
 				convertView = mInflater.inflate(R.layout.achievementlist, null);
-				item = (TextView) convertView.findViewById(R.id.list_text);
-				convertView.setTag(item);
+				holder = new ViewHolder();
+				holder.title = (TextView) convertView.findViewById(R.id.list_text);
+				holder.desc = (TextView) convertView.findViewById(R.id.description_text);
+				holder.status = (CheckBox) convertView.findViewById(R.id.list_checkbox);
+				holder.status.setTag(position);
+				holder.icon = (ImageView) convertView.findViewById(R.id.achievement_icon);
+
+				convertView.setTag(holder);
 			}
 			else{
-				item = (TextView) convertView.getTag();
+				holder = (ViewHolder) convertView.getTag();
 			}
 			
-			item.setText("lolzilue");
+			holder.title.setText(achi.get(position).getName());
+			holder.desc.setText(achi.get(position).getDescription());
+			holder.icon.setImageResource(R.drawable.wikipedia);
+			holder.status.setChecked(achi.get(position).getCompleted());
 
 			return convertView;
+		}
+		
+		private class ViewHolder{
+			TextView title;
+			TextView desc;
+			CheckBox status;
+			ImageView icon;
 		}
 		
 	}
