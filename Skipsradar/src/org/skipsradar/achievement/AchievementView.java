@@ -1,5 +1,8 @@
 package org.skipsradar.achievement;
 
+import java.io.FileOutputStream;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import org.mixare.R;
@@ -108,7 +111,8 @@ public class AchievementView extends ListActivity {
 				holder = (ViewHolder) convertView.getTag();
 			}
 			
-			holder.title.setText(achi.get(position).getName());
+			String completion = completion(achi.get(position)) + " %";
+			holder.title.setText(achi.get(position).getName() + " - " + completion);
 			holder.desc.setText(achi.get(position).getDescription());
 			holder.icon.setImageResource(R.drawable.wikipedia);
 			holder.status.setChecked(achi.get(position).getCompleted());
@@ -123,6 +127,31 @@ public class AchievementView extends ListActivity {
 			ImageView icon;
 		}
 		
+	}
+	
+	/**
+	 * Takes an achievement and returns a double
+	 * representing the percentage of completion
+	 * for this achievement.
+	 * 
+	 * @param achi
+	 * @return
+	 */
+	private double completion(Achievement achi){
+		double percentage = 0;
+		DecimalFormat df = new DecimalFormat("#.#");
+		if(!achi.getCompleted()){
+			if(achi instanceof nrProgAchievement){
+				percentage = (double)((nrProgAchievement) achi).getStatus() / (double)((nrProgAchievement) achi).getTarget();
+				percentage *= 100;
+			}
+			//TODO handle special case achievements
+		}
+		else{
+			percentage = 100;
+		}
+		df.format(percentage);
+		return percentage;
 	}
 
 }

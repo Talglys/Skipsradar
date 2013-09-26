@@ -35,30 +35,36 @@ public class nrProgAchievement extends Achievement {
 	 * target is reached, will set the 
 	 * Achievement to completed.
 	 */
-	public void progress(){
+	public boolean progress(){
 		if(!this.getCompleted()){
 			status++;
 			if(status >= target){
 				this.setCompleted();
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	/**
 	 * Will progress status by the number
 	 * provided in progression. If target
 	 * is reached, will set the Achievement
-	 * to completed.
+	 * to completed. It returns true if
+	 * the achievement was completed during
+	 * the progression. False otherwise.
 	 * 
 	 * @param progression
 	 */
-	public void progress(int progression){
+	public boolean progress(int progression){
 		if(!this.getCompleted()){
 			status += progression;
 			if(status >= target){
 				this.setCompleted();
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	public int getTarget(){

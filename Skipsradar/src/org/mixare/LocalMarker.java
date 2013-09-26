@@ -34,6 +34,7 @@ import org.mixare.lib.marker.draw.PrimitiveProperty;
 import org.mixare.lib.reality.PhysicalPlace;
 import org.mixare.lib.render.Camera;
 import org.mixare.lib.render.MixVector;
+import org.skipsradar.achievement.AchievementManager;
 
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -46,7 +47,7 @@ import android.location.Location;
  */
 
 public abstract class LocalMarker implements Marker {
-
+	
 	private String ID;
 	protected String title;
 	protected boolean underline = false;
@@ -89,7 +90,6 @@ public abstract class LocalMarker implements Marker {
 		this.colour = colour;
 
 		this.ID = id + "##" + type + "##" + title;
-
 	}
 
 
@@ -259,6 +259,22 @@ public abstract class LocalMarker implements Marker {
 		boolean evtHandled = false;
 
 		if (isClickValid(x, y)) {
+			//TODO: check if handling achievements here is ok
+			evtHandled = state.handleEvent(ctx, URL);
+		}
+		return evtHandled;
+	}
+	
+	/**
+	 * Added by Andreas to handle achievements
+	 * 
+	 */
+	public boolean fClick(float x, float y, MixContextInterface ctx, MixStateInterface state, String mmsi) {
+		boolean evtHandled = false;
+		
+		if (isClickValid(x, y)) {
+			AchievementManager.getInstance().shipEvent("" + mmsi);
+			//TODO: check if handling achievements here is ok
 			evtHandled = state.handleEvent(ctx, URL);
 		}
 		return evtHandled;

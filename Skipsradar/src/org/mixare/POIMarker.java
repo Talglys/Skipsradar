@@ -22,9 +22,12 @@ package org.mixare;
 import java.text.DecimalFormat;
 
 import org.mixare.LocalMarker;
+import org.mixare.lib.MixContextInterface;
+import org.mixare.lib.MixStateInterface;
 import org.mixare.lib.MixUtils;
 import org.mixare.lib.gui.PaintScreen;
 import org.mixare.lib.gui.TextObj;
+import org.skipsradar.achievement.AchievementManager;
 
 import android.graphics.Color;
 import android.graphics.Path;
@@ -42,11 +45,12 @@ public class POIMarker extends LocalMarker {
 
 	public static final int MAX_OBJECTS = 20;
 	public static final int OSM_URL_MAX_OBJECTS = 5;
+	private int mmsi; //Changed by Andreas 24.09.13 11:25
 
 	public POIMarker(String id, String title, double latitude, double longitude,
-			double altitude, String URL, int type, int color) {
+			double altitude, String URL, int type, int color, int mmsi) {
 		super(id, title, latitude, longitude, altitude, URL, type, color);
-
+		this.mmsi = mmsi; //Changed by Andreas 24.09.13 11:25
 	}
 
 	@Override
@@ -149,6 +153,17 @@ public class POIMarker extends LocalMarker {
 		tri.close();
 		dw.paintPath(tri, cMarker.x, cMarker.y, radius * 2, radius * 2,
 				currentAngle + 90, 1);
+	}
+	
+	//Changed by Andreas 24.09.13 11:37
+	@Override
+	public boolean fClick(float x, float y, MixContextInterface ctx,
+			MixStateInterface state) {
+		/*
+		 * Handles a ship event, to update acheivements,
+		 * and the list of seen ships, if relevant.
+		 */
+		return super.fClick(x, y, ctx, state, ""+mmsi);
 	}
 
 }

@@ -74,7 +74,8 @@ public class WikiDataProcessor extends DataHandler implements DataProcessor{
 			
 			Marker ma = null;
 			if (jo.has("title") && jo.has("lat") && jo.has("lng")
-					&& jo.has("elevation") && jo.has("wikipediaUrl")) {
+					&& jo.has("elevation") && jo.has("wikipediaUrl")
+					&& jo.has("mmsi")) {
 	
 				Log.v(MixView.TAG, "processing Wikipedia JSON object");
 		
@@ -86,7 +87,7 @@ public class WikiDataProcessor extends DataHandler implements DataProcessor{
 						jo.getDouble("lng"), 
 						jo.getDouble("elevation"), 
 						"http://"+jo.getString("wikipediaUrl"), 
-						taskId, colour);
+						taskId, colour, jo.getInt("mmsi"));
 				markers.add(ma);
 			}
 		}

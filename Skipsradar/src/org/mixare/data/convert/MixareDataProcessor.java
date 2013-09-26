@@ -60,6 +60,7 @@ public class MixareDataProcessor extends DataHandler implements DataProcessor{
 	@Override
 	public List<Marker> load(String rawData, int taskId, int colour) throws JSONException {
 		List<Marker> markers = new ArrayList<Marker>();
+		//System.out.println("RawData: " +  rawData);
 		JSONObject root = convertToJSON(rawData);
 		JSONArray dataArray = root.getJSONArray("results");
 		int top = Math.min(MAX_JSON_OBJECTS, dataArray.length());
@@ -69,7 +70,7 @@ public class MixareDataProcessor extends DataHandler implements DataProcessor{
 			
 			Marker ma = null;
 			if (jo.has("title") && jo.has("lat") && jo.has("lng")
-					&& jo.has("elevation")) {
+					&& jo.has("elevation") && jo.has("mmsi")) {
 
 				String id = "";
 				if(jo.has("id"))
@@ -88,7 +89,8 @@ public class MixareDataProcessor extends DataHandler implements DataProcessor{
 						jo.getDouble("lng"), 
 						jo.getDouble("elevation"), 
 						link, 
-						taskId, colour);
+						taskId, colour,
+						jo.getInt("mmsi")); //Changed by Andreas 24.09.13 11:25
 				markers.add(ma);
 			}
 		}

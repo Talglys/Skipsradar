@@ -1,12 +1,19 @@
 package org.skipsradar.achievement;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import org.mixare.R;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 
 public class AchievementStorage {
 
+	private static final String mmsiStore = "mmsiStore";
+	private static final int mmsiLength = 9;
 	private SharedPreferences settings;
 	private static AchievementStorage instance;
 	private Context ctx;
@@ -97,6 +104,99 @@ public class AchievementStorage {
 			editor.putString(achievement.getID(), achievement.getCompletionStatus());
 		}
 		editor.commit();
+	}
+	
+	/**
+	 * Stores the supplied mmsi in the internal storage.
+	 * This method will not check to see if the supplied
+	 * value already exists within the storage.
+	 * @param mmsi
+	 */
+	public void storeMmsi(String mmsi){
+		/*
+		try {
+			FileOutputStream fos = ctx.openFileOutput(mmsiStore, Context.MODE_PRIVATE);
+			fos.write(mmsi.getBytes());
+			fos.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
+		
+		String mmsiString = settings.getString(mmsiStore, "Null");
+		SharedPreferences.Editor editor = settings.edit();
+		if(mmsiString.equals("Null")){
+			editor.putString(mmsiStore, mmsi);
+		}
+		else{
+			mmsiString += "|" + mmsi;
+			editor.putString(mmsiStore, mmsiString);
+		}
+		editor.commit();
+	}
+	
+	/**
+	 * Reads the internal storage and returns
+	 * an ArrayList of the currently seen mmsi
+	 * values.
+	 * @return
+	 */
+	public ArrayList<String> getMmsi(){
+		ArrayList<String> mmsi = new ArrayList<String>();
+		/*
+		try {
+			FileInputStream fis = ctx.openFileInput(mmsiStore);
+			boolean reachedEnd = false;
+			while(true) {
+				/*
+				 * Will read the next byte in the file and add
+				 * it to this array. The array will later
+				 * be converted into a string and added
+				 * to the arraylist.
+				 *
+				byte[] mmsiArray = new byte[mmsiLength];
+				for (int i = 0; i < mmsiLength; i++) {
+					int temp = fis.read();
+					if(temp == -1){
+						//If we've reached the end, break
+						reachedEnd = true;
+						break;
+					}
+					else{
+						mmsiArray[i] = (byte) temp;
+					}
+				}
+				if(reachedEnd){
+					//Incomplete values will not be added
+					break;
+				}
+				else{
+					mmsi.add(mmsiArray.toString());
+				}
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
+		String mmsiString = settings.getString(mmsiStore, "Null");
+		System.out.println("mmsi: " + mmsiString);
+		if(!mmsiString.equals("Null")){
+			String[] mmsiList = mmsiString.split("\\|", -1);
+			for (String string : mmsiList) {
+				mmsi.add(string);
+			}
+		}
+		
+		return mmsi;
 	}
 	
 }

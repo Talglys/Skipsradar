@@ -9,12 +9,11 @@
 		<item>@string/NAVIGATION_MARKER</item>
 	</string-array>
 	<string-array name="defaultdatasources">
-	    <item>Wikipedia|http://ws.geonames.org/findNearbyWikipediaJSON|0|0|true</item>
-	    <item>Twitter|http://search.twitter.com/search.json|2|0|true</item>
-	    <item>OpenStreetmap|http://open.mapquestapi.com/xapi/api/0.6/node[railway=station]|3|1|true</item>
-	    <item>Own URL|http://mixare.org/geotest.php|4|0|false</item>
+	    <item>Skipsradar|http://test.shiprep.no/shiprepwebuipec/api/NearbyShips|4|0|true</item>
 	</string-array>
 	<string-array name="defaultachievements">
-	    <item >Achi01|Test|Testing that this works|nrProg|5</item>
+	    <item >Achi01|Matros|Se 2 skip|nrProg|2</item>
+	    <item >Achi02|Admiral|Se 10 skip|nrProg|10</item>
+	    <item >Achi03|Flåtekommandør|Se 50 skip|nrProg|50</item>
 	</string-array>
 </resources>

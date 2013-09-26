@@ -41,7 +41,9 @@ import org.mixare.data.TestList;
 import org.mixare.lib.gui.PaintScreen;
 import org.mixare.lib.marker.Marker;
 import org.mixare.lib.render.Matrix;
+import org.skipsradar.achievement.AchievementManager;
 import org.skipsradar.achievement.AchievementStorage;
+import org.skipsradar.achievement.AchievementView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -145,6 +147,8 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 			
 			//Added by Andreas 17.09.13 16:27
 			AchievementStorage.initialize(getMixViewData().getMixContext());
+			//Added by Andreas 25.09.2013 10:12
+			AchievementManager.initialize(getMixViewData().getMixContext());
 
 		} catch (Exception ex) {
 			doError(ex);
@@ -602,7 +606,7 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 						Toast.LENGTH_LONG).show();
 			}
 			*/
-			Intent intent = new Intent(MixView.this, TestList.class);
+			Intent intent = new Intent(MixView.this, AchievementView.class);
 			startActivityForResult(intent, 40);
 			break;
 			

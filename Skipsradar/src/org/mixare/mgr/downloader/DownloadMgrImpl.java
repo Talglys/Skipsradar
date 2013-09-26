@@ -93,6 +93,7 @@ class DownloadMgrImpl implements Runnable, DownloadManager {
 			String pageContent = HttpTools.getPageContent(request,
 					ctx.getContentResolver());
 
+			System.out.println("Pagecontent: " + pageContent + "\nUrl: " + request.getSource().getUrl());
 			if (pageContent != null) {
 				// try loading Marker data
 				List<Marker> markers = DataConvertor.getInstance().load(

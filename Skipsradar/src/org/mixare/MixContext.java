@@ -74,7 +74,7 @@ public class MixContext extends ContextWrapper implements MixContextInterface {
 	}
 
 	public String getStartUrl() {
-		/*
+		
 		Intent intent = ((Activity) getActualMixView()).getIntent();
 		if (intent.getAction() != null
 				&& intent.getAction().equals(Intent.ACTION_VIEW)) {
@@ -82,11 +82,12 @@ public class MixContext extends ContextWrapper implements MixContextInterface {
 		} else {
 			return "";
 		}
-		*/
+		
 		
 		//Will, in theory, always start the app with this link
-		return "http://folk.ntnu.no/andrmos/mixareData.php";
-	}
+		//return "http://test.shiprep.no/shiprepwebuipec/api/NearbyShips";
+		//return "http://test.shiprep.no/shiprepwebuipec/api/NearbyShips?latitude=63.4395831&longitude=10.4007685&altitude=0.0&radius=80";
+	}	
 
 	public void getRM(Matrix dest) {
 		synchronized (rotationM) {
