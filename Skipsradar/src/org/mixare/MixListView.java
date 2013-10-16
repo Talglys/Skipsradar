@@ -98,6 +98,7 @@ public class MixListView extends ListActivity {
 		/*add all marker items to a title and a URL Vector*/
 		for (int i = 0; i < jLayer.getMarkerCount(); i++) {
 			Marker ma = jLayer.getMarker(i);
+			System.out.println("Marker " + i + " of " + jLayer.getMarkerCount() + " is " +ma.isActive());
 			if(ma.isActive()) {
 				if (ma.getURL()!=null) {
 					/* Underline the title if website is available*/
@@ -133,7 +134,7 @@ public class MixListView extends ListActivity {
 
 			setListAdapter(new ArrayAdapter<SpannableString>(this, android.R.layout.simple_list_item_1,listViewMenu));
 			getListView().setTextFilterEnabled(true);
-			break;
+			//break;
 
 		}
 	}

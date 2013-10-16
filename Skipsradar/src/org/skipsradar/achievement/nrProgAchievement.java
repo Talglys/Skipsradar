@@ -1,5 +1,7 @@
 package org.skipsradar.achievement;
 
+import java.text.DecimalFormat;
+
 /**
  * This is an achievement of the type; the user has done 
  * a thing x out of y times, and must do that thing y times
@@ -83,6 +85,21 @@ public class nrProgAchievement extends Achievement {
 		else{
 			return "false|" + status;
 		}
+	}
+	
+	@Override
+	public double getPercentage() {
+		double percentage = (double)status/(double)target;
+		percentage *= 100;
+		return percentage;
+	}
+	
+	@Override
+	public String getDetails() {
+		String message = getDescription();
+		message += "\nDu har " + status + "/" + target;
+		message += "\n" + (new DecimalFormat("#.#")).format(getPercentage()) + "% fullført.";
+		return message;
 	}
 
 }

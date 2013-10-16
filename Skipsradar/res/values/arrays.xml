@@ -15,5 +15,7 @@
 	    <item >Achi01|Matros|Se 2 skip|nrProg|2</item>
 	    <item >Achi02|Admiral|Se 10 skip|nrProg|10</item>
 	    <item >Achi03|Flåtekommandør|Se 50 skip|nrProg|50</item>
+	    <item >Achi04|Gammel sjøulk|Se 75 skip|nrProg|75</item>
+	    <item >Achi05|Fargerik|Se alle 6 Color Line skipene|specShip|6|257182000|259222000|259490000|258092000|259153000|259278000|Color Fantasy|Color Magic|Superspeed 1|Superspeed 2|Bohus|Color Viking</item>
 	</string-array>
 </resources>

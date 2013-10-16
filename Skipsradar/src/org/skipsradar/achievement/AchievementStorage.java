@@ -54,6 +54,7 @@ public class AchievementStorage {
 			 * complete or not.
 			 */
 			String achiProgressString = settings.getString(tempAchi[0], "Null");
+			String[] achiProgress = achiProgressString.split("\\|", -1);
 			
 			if(tempAchi.length > 3){ //Checks if the achievement is of a special type
 				/*
@@ -67,10 +68,35 @@ public class AchievementStorage {
 								tempAchi[2], "false", tempAchi[4], "0"));
 					}
 					else{
-						String[] achiProgress = achiProgressString.split("\\|", -1);
 						achi.add(new nrProgAchievement(tempAchi[0], tempAchi[1], 
 								tempAchi[2], achiProgress[0], tempAchi[4], achiProgress[1]));
 					}
+				}
+				/*
+				 * Form of specShip achievements:
+				 * Unchanging: AchiXX|Name|Description|specShip|Y|mmsi1|mmsi2|...|name1|name2|...
+				 * Changing: Complete|Status1|Status2|...
+				 */
+				else if(tempAchi[3].equals("specShip")){
+					int length = Integer.parseInt(tempAchi[4]);
+					String[] shipList = new String[length];
+					String[] nameList = new String[length];
+					boolean[] statusList = new boolean[length];
+					String complete = "false";
+					for (int j = 0; j < length; j++) {
+						shipList[j] = tempAchi[5+j];
+						nameList[j] = tempAchi[5+length+j];
+						if(achiProgressString.equals("Null")){
+							statusList[j] = false;
+						}
+						else{
+							statusList[j] = Boolean.parseBoolean(achiProgress[1+j]);
+							complete = achiProgress[0];
+						}
+					}
+					achi.add(new specShipAchievement(tempAchi[0], tempAchi[1], tempAchi[2], 
+							complete, shipList, nameList, statusList));
+					
 				}
 				//else if(){
 				//TODO: More types of achievements
@@ -113,20 +139,6 @@ public class AchievementStorage {
 	 * @param mmsi
 	 */
 	public void storeMmsi(String mmsi){
-		/*
-		try {
-			FileOutputStream fos = ctx.openFileOutput(mmsiStore, Context.MODE_PRIVATE);
-			fos.write(mmsi.getBytes());
-			fos.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
 		
 		String mmsiString = settings.getString(mmsiStore, "Null");
 		SharedPreferences.Editor editor = settings.edit();
@@ -148,45 +160,6 @@ public class AchievementStorage {
 	 */
 	public ArrayList<String> getMmsi(){
 		ArrayList<String> mmsi = new ArrayList<String>();
-		/*
-		try {
-			FileInputStream fis = ctx.openFileInput(mmsiStore);
-			boolean reachedEnd = false;
-			while(true) {
-				/*
-				 * Will read the next byte in the file and add
-				 * it to this array. The array will later
-				 * be converted into a string and added
-				 * to the arraylist.
-				 *
-				byte[] mmsiArray = new byte[mmsiLength];
-				for (int i = 0; i < mmsiLength; i++) {
-					int temp = fis.read();
-					if(temp == -1){
-						//If we've reached the end, break
-						reachedEnd = true;
-						break;
-					}
-					else{
-						mmsiArray[i] = (byte) temp;
-					}
-				}
-				if(reachedEnd){
-					//Incomplete values will not be added
-					break;
-				}
-				else{
-					mmsi.add(mmsiArray.toString());
-				}
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
 		String mmsiString = settings.getString(mmsiStore, "Null");
 		System.out.println("mmsi: " + mmsiString);
 		if(!mmsiString.equals("Null")){

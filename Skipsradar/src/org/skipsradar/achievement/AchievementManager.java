@@ -2,6 +2,8 @@ package org.skipsradar.achievement;
 
 import java.util.ArrayList;
 
+import org.mixare.R;
+
 import android.content.Context;
 import android.widget.Toast;
 
@@ -51,6 +53,7 @@ public class AchievementManager {
 	/**
 	 * This method will handle all updating of achievements
 	 * having anything to do with seeing ships.
+	 * The input is the mmsi of the ship seen.
 	 * @param ship
 	 */
 	public void shipEvent(String ship){
@@ -64,6 +67,9 @@ public class AchievementManager {
 				if(achi instanceof nrProgAchievement){
 					completed = ((nrProgAchievement) achi).progress();
 				}
+				if(achi instanceof specShipAchievement){
+					completed = ((specShipAchievement) achi).progress(ship);
+				}
 				//TODO handle special case achievements
 				
 				/*
@@ -71,7 +77,7 @@ public class AchievementManager {
 				 * toast message to let the user know.
 				 */
 				if(completed){
-					String text = "Achievement complete!\n" + achi.getName();
+					String text = R.string.achievement_complete + "\n" + achi.getName();
 					Toast toast = Toast.makeText(ctx, text, Toast.LENGTH_LONG); 
 					toast.show();
 				}

@@ -28,6 +28,10 @@ package org.mixare;
 
 import static android.hardware.SensorManager.SENSOR_DELAY_GAME;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -44,6 +48,7 @@ import org.mixare.lib.render.Matrix;
 import org.skipsradar.achievement.AchievementManager;
 import org.skipsradar.achievement.AchievementStorage;
 import org.skipsradar.achievement.AchievementView;
+import org.skipsradar.camera.CameraStorage;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -56,6 +61,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.hardware.Camera;
+import android.hardware.Camera.PictureCallback;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -66,6 +72,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.provider.Settings;
+import android.provider.MediaStore.Files.FileColumns;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.Gravity;
@@ -581,7 +588,7 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 		item1.setIcon(drawable.icon_datasource);
 		item2.setIcon(android.R.drawable.ic_menu_view);
 		item3.setIcon(android.R.drawable.ic_menu_mapmode);
-		item4.setIcon(android.R.drawable.ic_menu_zoom);
+		item4.setIcon(android.R.drawable.ic_menu_camera);
 		item5.setIcon(android.R.drawable.ic_menu_search);
 		item6.setIcon(android.R.drawable.ic_menu_info_details);
 		item7.setIcon(android.R.drawable.ic_menu_share);
@@ -589,6 +596,28 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 		return true;
 	}
 
+	private PictureCallback mPicture = new PictureCallback() {
+
+	    @Override
+	    public void onPictureTaken(byte[] data, Camera camera) {
+
+	        File pictureFile = CameraStorage.getOutputMediaFile(CameraStorage.MEDIA_TYPE_IMAGE);
+	        if (pictureFile == null){
+	            Log.d(TAG, "Error creating media file, check storage permissions.");
+	            return;
+	        }
+
+	        try {
+	            FileOutputStream fos = new FileOutputStream(pictureFile);
+	            fos.write(data);
+	            fos.close();
+	        } catch (FileNotFoundException e) {
+	            Log.d(TAG, "File not found: " + e.getMessage());
+	        } catch (IOException e) {
+	            Log.d(TAG, "Error accessing file: " + e.getMessage());
+	        }
+	    }
+	};
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -631,12 +660,18 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 			Intent intent2 = new Intent(MixView.this, MixMap.class);
 			startActivityForResult(intent2, 20);
 			break;
-		/* zoom level */
+		/* zoom level, replaced with camera */
 		case 4:
+			/*
 			getMixViewData().getMyZoomBar().setVisibility(View.VISIBLE);
 			getMixViewData().setZoomProgress(getMixViewData().getMyZoomBar()
 					.getProgress());
 			break;
+			*/
+			
+			camScreen.camera.takePicture(null, null, mPicture);
+			
+			
 		/* Search */
 		case 5:
 			onSearchRequested();

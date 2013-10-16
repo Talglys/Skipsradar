@@ -7,20 +7,31 @@ import java.util.ArrayList;
 
 import org.mixare.R;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.content.Context;
+import android.net.NetworkInfo.DetailedState;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class AchievementView extends ListActivity {
 	
 	public static final String SHARED_PREFS = "AchievementPrefs";
+	public static final int MENU_DETAILS_ID = Menu.FIRST;
 	private static AchievementAdapter adapter;
 	
 	/** Called when the activity is first created. */
@@ -37,6 +48,8 @@ public class AchievementView extends ListActivity {
 		adapter = new AchievementAdapter();
 		adapter.setAchievements(AchievementStorage.getInstance().getAchievements());
 		setListAdapter(adapter);
+//		ListView lv = getListView();
+//		registerForContextMenu(lv);
 	}
 	
 	@Override
@@ -130,28 +143,30 @@ public class AchievementView extends ListActivity {
 	}
 	
 	/**
-	 * Takes an achievement and returns a double
+	 * Takes an achievement and returns a string
 	 * representing the percentage of completion
 	 * for this achievement.
 	 * 
 	 * @param achi
 	 * @return
 	 */
-	private double completion(Achievement achi){
-		double percentage = 0;
-		DecimalFormat df = new DecimalFormat("#.#");
-		if(!achi.getCompleted()){
-			if(achi instanceof nrProgAchievement){
-				percentage = (double)((nrProgAchievement) achi).getStatus() / (double)((nrProgAchievement) achi).getTarget();
-				percentage *= 100;
-			}
-			//TODO handle special case achievements
-		}
-		else{
-			percentage = 100;
-		}
-		df.format(percentage);
-		return percentage;
+	private String completion(Achievement achi){
+		return new DecimalFormat("#.#").format(achi.getPercentage());
 	}
-
+	
+	/*
+	 * Shows a dialog with details about the achievement
+	 * (non-Javadoc)
+	 * @see android.app.ListActivity#onListItemClick(android.widget.ListView, android.view.View, int, long)
+	 */
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		AchiDetailDiaFragment dialog = new AchiDetailDiaFragment();
+		Bundle args = new Bundle();
+		args.putString(AchiDetailDiaFragment.DETAILS_STRING, ((Achievement)adapter.getItem((int)id)).getDetails());
+		dialog.setArguments(args);
+		dialog.show(getFragmentManager(), AchiDetailDiaFragment.DETAILS_STRING);
+		super.onListItemClick(l, v, position, id);
+	}
+	
 }

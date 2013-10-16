@@ -1,5 +1,7 @@
 package org.skipsradar.achievement;
 
+import java.text.DecimalFormat;
+
 /**
  * This is the superclass of all other achievements,
  * and should not be used by itself unless the
@@ -70,11 +72,31 @@ public class Achievement {
 	}
 	
 	public String getCompletionStatus() {
+		return ""+complete;
+	}
+	
+	/**
+	 * Returns the percentage of completion
+	 * for this achievement.
+	 * @return
+	 */
+	public double getPercentage(){
 		if(complete){
-			return "true";
+			return 100;
 		}
 		else{
-			return "false";
+			return 0;
 		}
+	}
+	
+	/**
+	 * Gets a string with details about the achievement
+	 * for displaying in a dialog
+	 * @return
+	 */
+	public String getDetails(){
+		String message = description;
+		message += "\n" + (new DecimalFormat("#.#")).format(getPercentage()) + "% fullført.";
+		return message;
 	}
 }
