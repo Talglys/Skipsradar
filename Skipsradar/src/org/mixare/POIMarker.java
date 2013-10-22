@@ -165,5 +165,12 @@ public class POIMarker extends LocalMarker {
 		 */
 		return super.fClick(x, y, ctx, state, ""+mmsi);
 	}
+	
+	@Override
+	public boolean listClick(float x, float y, MixContextInterface ctx,
+			MixStateInterface state) {
+		// TODO Auto-generated method stub
+		return super.listClick(x, y, ctx, state, ""+mmsi);
+	}
 
 }

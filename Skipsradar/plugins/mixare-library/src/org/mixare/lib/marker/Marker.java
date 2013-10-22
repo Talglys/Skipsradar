@@ -72,11 +72,16 @@ public interface Marker extends Comparable<Marker>{
 	Label getTxtLab();
 
 	public boolean fClick(float x, float y, MixContextInterface ctx, MixStateInterface state);
-
+	
+	//Skipsradar only; Added by Andreas 22.10.13 11:42
+	public boolean listClick(float x, float y, MixContextInterface ctx, MixStateInterface state);
 	int getMaxObjects();
 	
 	void setExtras(String name, ParcelableProperty parcelableProperty);
 	
 	void setExtras(String name, PrimitiveProperty primitiveProperty);
+	
+	//Skipsradar addition; Added by Andreas 22.10.13 11:40
+	boolean isClickValid(float x, float y);
 
 }

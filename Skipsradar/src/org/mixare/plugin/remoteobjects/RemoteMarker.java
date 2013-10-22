@@ -298,4 +298,17 @@ public class RemoteMarker implements Marker{
 		return this.getID().compareTo(rm.getID());
 	}
 
+	@Override
+	public boolean isClickValid(float x, float y) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean listClick(float x, float y, MixContextInterface ctx,
+			MixStateInterface state) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

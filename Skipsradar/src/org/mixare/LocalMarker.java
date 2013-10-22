@@ -167,7 +167,8 @@ public abstract class LocalMarker implements Marker {
 //		cCMarker(origin, viewCam, 0, 0);
 //	}
 
-	private boolean isClickValid(float x, float y) {
+	//Used to be private, changed by Andreas 18.10.2013 12:35
+	public boolean isClickValid(float x, float y) {
 		
 		//if the marker is not active (i.e. not shown in AR view) we don't have to check it for clicks
 		if (!isActive() && !this.isVisible)
@@ -271,12 +272,31 @@ public abstract class LocalMarker implements Marker {
 	 */
 	public boolean fClick(float x, float y, MixContextInterface ctx, MixStateInterface state, String mmsi) {
 		boolean evtHandled = false;
-		
 		if (isClickValid(x, y)) {
 			AchievementManager.getInstance().shipEvent("" + mmsi);
 			//TODO: check if handling achievements here is ok
 			evtHandled = state.handleEvent(ctx, URL);
 		}
+		return evtHandled;
+	}
+	
+	/**
+	 * Cannot handle achievements.
+	 * The listClick methods does the same as the fClick methods, but does not
+	 * check if the click is valid.
+	 */
+	public boolean listClick(float x, float y, MixContextInterface ctx, MixStateInterface state) {
+		boolean evtHandled = false;
+		//TODO: check if handling achievements here is ok
+		evtHandled = state.handleEvent(ctx, URL);
+		return evtHandled;
+	}
+	
+	public boolean listClick(float x, float y, MixContextInterface ctx, MixStateInterface state, String mmsi) {
+		boolean evtHandled = false;
+		AchievementManager.getInstance().shipEvent("" + mmsi);
+		//TODO: check if handling achievements here is ok
+		evtHandled = state.handleEvent(ctx, URL);
 		return evtHandled;
 	}
 

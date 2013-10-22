@@ -45,6 +45,7 @@ import org.mixare.data.TestList;
 import org.mixare.lib.gui.PaintScreen;
 import org.mixare.lib.marker.Marker;
 import org.mixare.lib.render.Matrix;
+import org.skipsradar.ClickBundle;
 import org.skipsradar.achievement.AchievementManager;
 import org.skipsradar.achievement.AchievementStorage;
 import org.skipsradar.achievement.AchievementView;
@@ -93,6 +94,8 @@ import android.widget.Toast;
 
 public class MixView extends Activity implements SensorEventListener, OnTouchListener {
 
+	private ClickBundle fragmentBundle;
+	
 	private CameraSurface camScreen;
 	private AugmentedView augScreen;
 
@@ -600,7 +603,7 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 
 	    @Override
 	    public void onPictureTaken(byte[] data, Camera camera) {
-
+	    	System.out.println("Skipsradar: Trying to take image");
 	        File pictureFile = CameraStorage.getOutputMediaFile(CameraStorage.MEDIA_TYPE_IMAGE);
 	        if (pictureFile == null){
 	            Log.d(TAG, "Error creating media file, check storage permissions.");
@@ -668,9 +671,8 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 					.getProgress());
 			break;
 			*/
-			
 			camScreen.camera.takePicture(null, null, mPicture);
-			
+			break;
 			
 		/* Search */
 		case 5:
@@ -1030,6 +1032,18 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 		getMixViewData().getMixContext().getDownloadManager().switchOn();
 
 	};
+	
+	public void setFragmentBundle(ClickBundle bundle){
+		this.fragmentBundle = bundle;
+	}
+	
+	public ClickBundle getFragmentBundle(){
+		return this.fragmentBundle;
+	}
+	
+	public void ClearClickData(){
+		this.fragmentBundle = null;
+	}
 
 }
 

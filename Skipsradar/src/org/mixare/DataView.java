@@ -42,9 +42,12 @@ import org.mixare.lib.render.Camera;
 import org.mixare.mgr.downloader.DownloadManager;
 import org.mixare.mgr.downloader.DownloadRequest;
 import org.mixare.mgr.downloader.DownloadResult;
+import org.skipsradar.ClickBundle;
+import org.skipsradar.MarkerListDiaFragment;
 
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -407,10 +410,23 @@ public class DataView {
 			// distance) the first marker that
 			// matches triggers the event.
 			//TODO handle collection of markers. (what if user wants the one at the back)
+			ArrayList<Marker> stackedMarkers = new ArrayList<Marker>();
 			for (int i = 0; i < dataHandler.getMarkerCount() && !evtHandled; i++) {
 				Marker pm = dataHandler.getMarker(i);
-
-				evtHandled = pm.fClick(evt.x, evt.y, mixContext, state);
+				if(pm.isClickValid(evt.x, evt.y)){
+					stackedMarkers.add(pm);
+				}
+			}
+			if(stackedMarkers.size() == 1){
+				evtHandled = stackedMarkers.get(0).fClick(evt.x, evt.y, mixContext, state);
+			}
+			else if(stackedMarkers.size() > 1){
+				ClickBundle bundle = new ClickBundle(stackedMarkers, 
+						new float[]{evt.x, evt.y}, mixContext, state);
+				getContext().getActualMixView().setFragmentBundle(bundle);
+				MarkerListDiaFragment dialog = new MarkerListDiaFragment();
+				dialog.show(getContext().getActualMixView().getFragmentManager(), 
+						MarkerListDiaFragment.MARKER_SEL_CHOICES);
 			}
 		}
 		return evtHandled;

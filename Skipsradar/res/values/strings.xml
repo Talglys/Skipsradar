@@ -109,5 +109,8 @@
 	
 	<string name="achievement_complete">Du fullførte en utmerkelse!</string>
 	<string name="achi_view_details">Detaljer</string>
+	
+	<string name="marker_sel_title">Hvilket skip mente du?</string>
+	<string name="marker_sel_error">Det oppstod en feil ved velging av skip. Venligst prøv igjen.</string>
 
 </resources>
