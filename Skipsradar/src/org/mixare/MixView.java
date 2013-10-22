@@ -46,6 +46,7 @@ import org.mixare.lib.gui.PaintScreen;
 import org.mixare.lib.marker.Marker;
 import org.mixare.lib.render.Matrix;
 import org.skipsradar.ClickBundle;
+import org.skipsradar.httpPost;
 import org.skipsradar.achievement.AchievementManager;
 import org.skipsradar.achievement.AchievementStorage;
 import org.skipsradar.achievement.AchievementView;
@@ -588,11 +589,11 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 				getString(R.string.menu_item_7));
 
 		/* assign icons to the menu items */
-		item1.setIcon(drawable.icon_datasource);
+		item1.setIcon(android.R.drawable.ic_menu_agenda);
 		item2.setIcon(android.R.drawable.ic_menu_view);
 		item3.setIcon(android.R.drawable.ic_menu_mapmode);
 		item4.setIcon(android.R.drawable.ic_menu_camera);
-		item5.setIcon(android.R.drawable.ic_menu_search);
+		item5.setIcon(android.R.drawable.ic_menu_edit);
 		item6.setIcon(android.R.drawable.ic_menu_info_details);
 		item7.setIcon(android.R.drawable.ic_menu_share);
 
@@ -674,10 +675,20 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 			camScreen.camera.takePicture(null, null, mPicture);
 			break;
 			
-		/* Search */
+		/* Search, replaced with sending a test message */
 		case 5:
+			/*
 			onSearchRequested();
+			*/
+			Thread th = new Thread(new Runnable() {
+				public void run() {
+					httpPost.postData();
+				}
+			});
+			th.start();
+			
 			break;
+			
 		/* GPS Information */
 		case 6:
 			Location currentGPSInfo = getMixViewData().getMixContext().getLocationFinder().getCurrentLocation();
