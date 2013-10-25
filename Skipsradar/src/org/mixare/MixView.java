@@ -41,7 +41,6 @@ import org.mixare.R.drawable;
 import org.mixare.data.DataHandler;
 import org.mixare.data.DataSourceList;
 import org.mixare.data.DataSourceStorage;
-import org.mixare.data.TestList;
 import org.mixare.lib.gui.PaintScreen;
 import org.mixare.lib.marker.Marker;
 import org.mixare.lib.render.Matrix;
@@ -51,6 +50,7 @@ import org.skipsradar.achievement.AchievementManager;
 import org.skipsradar.achievement.AchievementStorage;
 import org.skipsradar.achievement.AchievementView;
 import org.skipsradar.camera.CameraStorage;
+import org.skipsradar.camera.PhotoView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -160,6 +160,8 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 			AchievementStorage.initialize(getMixViewData().getMixContext());
 			//Added by Andreas 25.09.2013 10:12
 			AchievementManager.initialize(getMixViewData().getMixContext());
+			//Added by Andreas 23.10.2013 14:02
+			CameraStorage.initialize(getMixViewData().getMixContext());
 
 		} catch (Exception ex) {
 			doError(ex);
@@ -672,7 +674,9 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 					.getProgress());
 			break;
 			*/
-			camScreen.camera.takePicture(null, null, mPicture);
+			Intent intent3 = new Intent(MixView.this, PhotoView.class);
+			startActivityForResult(intent3, 40);
+			//camScreen.camera.takePicture(null, null, mPicture);
 			break;
 			
 		/* Search, replaced with sending a test message */
@@ -680,13 +684,15 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 			/*
 			onSearchRequested();
 			*/
+			camScreen.camera.takePicture(null, null, mPicture);
+			/*
 			Thread th = new Thread(new Runnable() {
 				public void run() {
 					httpPost.postData();
 				}
 			});
 			th.start();
-			
+			*/
 			break;
 			
 		/* GPS Information */

@@ -61,7 +61,6 @@ public class AchievementView extends ListActivity {
 	
 	private class AchievementAdapter extends BaseAdapter{
 		
-		TextView item; //TODO: Remove this, when safe
 		private LayoutInflater mInflater;
 		private ArrayList<Achievement> achi;
 

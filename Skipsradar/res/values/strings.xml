@@ -112,5 +112,12 @@
 	
 	<string name="marker_sel_title">Hvilket skip mente du?</string>
 	<string name="marker_sel_error">Det oppstod en feil ved velging av skip. Venligst prøv igjen.</string>
+	
+	<string name="image_dia_menu_show">Vis bilde</string>
+	<string name="image_dia_menu_delete">Slett bilde</string>
+	<string name="image_dia_menu_upload">Last opp bilde</string>
+	<string name="image_dia_menu_cancel">Avbryt</string>
+	<string name="image_dia_noupload">Skipsradaren har ingen lagret data på dette bildet.</string>
+	<string name="icon_DESCRIPTION">Test...test...test</string>
 
 </resources>
