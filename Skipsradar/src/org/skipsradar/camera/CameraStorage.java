@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.skipsradar.achievement.Achievement;
 import org.skipsradar.achievement.AchievementView;
 
 import android.content.Context;
@@ -22,6 +23,7 @@ public class CameraStorage {
 	public static final int MEDIA_TYPE_IMAGE = 1;
 	public static final int MEDIA_TYPE_VIDEO = 2;
 	public static final String imageFolder = "Skipsradar";
+	public static final String LAST_SAVED_IMAGE = "last_saved_image";
 	private static CameraStorage instance; 
 	
 	Context ctx;
@@ -52,6 +54,7 @@ public class CameraStorage {
 					if(ext.equals("jpg")){
 						//Form of image info:
 						//Name|mmsi|ShipName
+						System.out.println("Debug: filename:" + filesInFolder[i].getName());
 						String imgInfoString = settings.getString(
 								filesInFolder[i].getName(), "Null");
 						//If no info on the image is saved on the phone
@@ -81,13 +84,38 @@ public class CameraStorage {
 				800, 800);
 	}
 	
+	public static void deleteImage(String name){
+		File file = new File(Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_PICTURES) + "/" + imageFolder + "/" + name);
+		file.delete();
+	}
+	
+	/**
+	 * Stores the name of the photo most recently
+	 * taken, to use with storing information on the
+	 * photo
+	 * @param name
+	 */
+	private void storeLastImageName(String name){
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString(LAST_SAVED_IMAGE, name);
+		editor.commit();
+	}
+	
+	public void storePhotoInfo(Photo photo){
+		String lsi = settings.getString(LAST_SAVED_IMAGE, "Null");
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString(lsi, lsi + "|" + photo.getShipMmsi() + "|" + photo.getShipName());
+		editor.commit();
+	}
+	
 	/** Create a file Uri for saving an image or video */
-	public static Uri getOutputMediaFileUri(int type){
+	public Uri getOutputMediaFileUri(int type){
 	      return Uri.fromFile(getOutputMediaFile(type));
 	}
 
 	/** Create a File for saving an image or video */
-	public static File getOutputMediaFile(int type){
+	public File getOutputMediaFile(int type){
 	    // To be safe, you should check that the SDCard is mounted
 	    // using Environment.getExternalStorageState() before doing this.
 	    File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
@@ -105,10 +133,12 @@ public class CameraStorage {
 
 	    // Create a media file name
 	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+	    String imgName = "IMG_"+ timeStamp + ".jpg";
+	    storeLastImageName(imgName);
 	    File mediaFile;
 	    if (type == MEDIA_TYPE_IMAGE){
 	        mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-	        "IMG_"+ timeStamp + ".jpg");
+	        imgName);
 	    } else if(type == MEDIA_TYPE_VIDEO) {
 	        mediaFile = new File(mediaStorageDir.getPath() + File.separator +
 	        "VID_"+ timeStamp + ".mp4");

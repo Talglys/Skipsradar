@@ -41,8 +41,8 @@
 	<string name="menu_item_1">Utmerkelser</string>
 	<string name="menu_item_2">Liste</string>
 	<string name="menu_item_3">Kart</string>
-	<string name="menu_item_4">Ta bilde</string>
-	<string name="menu_item_5">Testmelding</string>
+	<string name="menu_item_4">Galleri</string>
+	<string name="menu_item_5">Ta Bilde</string>
 	<string name="menu_item_6">Info</string>
 	<string name="menu_item_7">Lisens</string>
 
@@ -56,7 +56,7 @@
 	<string name="connection_error_dialog_button2">Instillinger</string>
 	<string name="connection_error_dialog_button3">Lukk appen</string>
 
-	<string name="connection_GPS_dialog_text">GPS lokasjonen kan ikke bli oppdatert... \nHvis du fortsetter, kan det hende at informasjonen 
+	<string name="connection_GPS_dialog_text">GPS lokasjonen kan ikke bli oppdatert. \nHvis du fortsetter, kan det hende at informasjonen 
 		\nikke blir vist på riktig plass.</string>
 	<string name="connection_GPS_dialog_button1">Forsett</string>
 	<string name="connection_GPS_dialog_button2">Lukk</string>
@@ -113,11 +113,14 @@
 	<string name="marker_sel_title">Hvilket skip mente du?</string>
 	<string name="marker_sel_error">Det oppstod en feil ved velging av skip. Venligst prøv igjen.</string>
 	
+	<string name="camera_no_visible">Det finnes ingen synlige skip.</string>
+	
 	<string name="image_dia_menu_show">Vis bilde</string>
 	<string name="image_dia_menu_delete">Slett bilde</string>
 	<string name="image_dia_menu_upload">Last opp bilde</string>
 	<string name="image_dia_menu_cancel">Avbryt</string>
 	<string name="image_dia_noupload">Skipsradaren har ingen lagret data på dette bildet.</string>
-	<string name="icon_DESCRIPTION">Test...test...test</string>
+	<string name="image_dia_delete_alert">Vil du virkelig slette dette bildet?</string>
+	<string name="icon_DESCRIPTION">Bilde</string>
 
 </resources>

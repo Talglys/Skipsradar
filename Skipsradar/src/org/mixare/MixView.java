@@ -44,12 +44,15 @@ import org.mixare.data.DataSourceStorage;
 import org.mixare.lib.gui.PaintScreen;
 import org.mixare.lib.marker.Marker;
 import org.mixare.lib.render.Matrix;
+import org.skipsradar.CameraListDiaFragment;
 import org.skipsradar.ClickBundle;
 import org.skipsradar.httpPost;
 import org.skipsradar.achievement.AchievementManager;
 import org.skipsradar.achievement.AchievementStorage;
 import org.skipsradar.achievement.AchievementView;
 import org.skipsradar.camera.CameraStorage;
+import org.skipsradar.camera.ImageMenuDiaFragment;
+import org.skipsradar.camera.Photo;
 import org.skipsradar.camera.PhotoView;
 
 import android.app.Activity;
@@ -63,14 +66,19 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
+import android.hardware.Camera.ShutterCallback;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.provider.Settings;
@@ -85,20 +93,35 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MixView extends Activity implements SensorEventListener, OnTouchListener {
 
+	/**
+	 * Should usually be null, and is used in
+	 * MarkerListDiaFragment
+	 */
 	private ClickBundle fragmentBundle;
+	private ArrayList<Photo> cameraVisibleShips;
+	private final ShutterCallback shutterCallback = new ShutterCallback() {
+        public void onShutter() {
+            AudioManager mgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            mgr.playSoundEffect(AudioManager.FLAG_PLAY_SOUND);
+        }
+    };
 	
 	private CameraSurface camScreen;
 	private AugmentedView augScreen;
+	private Button camButton;
 
 	private boolean isInited;
 	private static PaintScreen dWindow;
@@ -135,6 +158,7 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 			maintainCamera();
 			maintainAugmentR();
 			maintainZoomBar();
+			maintainCamButton();
 			
 			if (!isInited) {
 				//getMixViewData().setMixContext(new MixContext(this));
@@ -379,6 +403,7 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 		maintainCamera();
 		maintainAugmentR();
 		maintainZoomBar();
+		maintainCamButton();
 		
 	}
 	
@@ -427,6 +452,46 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 	}
 	
 	/**
+	 * http://stackoverflow.com/questions/6533120/addcontentview-align-at-the-screens-bottom-android
+	 * 05.11.13 11:10
+	 */
+	private void maintainCamButton() {
+		// Fake empty container layout
+		RelativeLayout lContainerLayout = new RelativeLayout(this);
+		lContainerLayout.setLayoutParams(new RelativeLayout.LayoutParams
+				( LayoutParams.FILL_PARENT , LayoutParams.FILL_PARENT ));
+		// Custom view
+		camButton = new Button(this);
+		camButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				takePicture();
+			}
+		});
+		camButton.setBackground(getResources().getDrawable(android.R.drawable.ic_menu_camera));
+		LayoutParams lButtonParams = new RelativeLayout
+				.LayoutParams( LayoutParams.WRAP_CONTENT , LayoutParams.WRAP_CONTENT );
+		((android.widget.RelativeLayout.LayoutParams) lButtonParams)
+			.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		camButton.setLayoutParams(lButtonParams);
+		lContainerLayout.addView(camButton);
+
+		// Adding full screen container
+		addContentView(lContainerLayout, new LayoutParams( LayoutParams.FILL_PARENT , LayoutParams.FILL_PARENT ) );
+	}
+	
+	/**
+	 * Not working, need more debugging
+	 */
+	private void maintainCamRes(){
+		//Added by Andreas 05.11.13 12:35 to change camera resolution
+		Camera.Parameters param = camScreen.camera.getParameters();
+		List<Camera.Size> sizes = param.getSupportedPictureSizes();
+		param.setPictureSize(sizes.get(sizes.size()-1).width, sizes.get(sizes.size()-1).height);
+	}
+	
+	/**
 	 * Refreshes Download 
 	 * TODO refresh downloads
 	 */
@@ -464,6 +529,7 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 				try {
 					maintainCamera();
 					maintainAugmentR();
+					maintainCamButton();
 					repaint();
 					setZoomLevel();
 				}
@@ -584,10 +650,8 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 		MenuItem item4 = menu.add(base, base + 3, base + 3,
 				getString(R.string.menu_item_4));
 		MenuItem item5 = menu.add(base, base + 4, base + 4,
-				getString(R.string.menu_item_5));
-		MenuItem item6 = menu.add(base, base + 5, base + 5,
 				getString(R.string.menu_item_6));
-		MenuItem item7 = menu.add(base, base + 6, base + 6,
+		MenuItem item6 = menu.add(base, base + 5, base + 5,
 				getString(R.string.menu_item_7));
 
 		/* assign icons to the menu items */
@@ -595,35 +659,64 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 		item2.setIcon(android.R.drawable.ic_menu_view);
 		item3.setIcon(android.R.drawable.ic_menu_mapmode);
 		item4.setIcon(android.R.drawable.ic_menu_camera);
-		item5.setIcon(android.R.drawable.ic_menu_edit);
-		item6.setIcon(android.R.drawable.ic_menu_info_details);
-		item7.setIcon(android.R.drawable.ic_menu_share);
+		item5.setIcon(android.R.drawable.ic_menu_info_details);
+		item6.setIcon(android.R.drawable.ic_menu_share);
 
 		return true;
 	}
 
-	private PictureCallback mPicture = new PictureCallback() {
+	/**
+	 * Takes the picture the correct way
+	 */
+	public void takePicture(){
+		PictureCallback mPicture = new PictureCallback() {
+			
+		    @Override
+		    public void onPictureTaken(byte[] data, Camera camera) {
+		        File pictureFile = CameraStorage.getInstance().getOutputMediaFile(CameraStorage.MEDIA_TYPE_IMAGE);
+		        if (pictureFile == null){
+		            Log.d(TAG, "Error creating media file, check storage permissions.");
+		            return;
+		        }
 
-	    @Override
-	    public void onPictureTaken(byte[] data, Camera camera) {
-	    	System.out.println("Skipsradar: Trying to take image");
-	        File pictureFile = CameraStorage.getOutputMediaFile(CameraStorage.MEDIA_TYPE_IMAGE);
-	        if (pictureFile == null){
-	            Log.d(TAG, "Error creating media file, check storage permissions.");
-	            return;
-	        }
-
-	        try {
-	            FileOutputStream fos = new FileOutputStream(pictureFile);
-	            fos.write(data);
-	            fos.close();
-	        } catch (FileNotFoundException e) {
-	            Log.d(TAG, "File not found: " + e.getMessage());
-	        } catch (IOException e) {
-	            Log.d(TAG, "Error accessing file: " + e.getMessage());
-	        }
-	    }
-	};
+		        try {
+		            FileOutputStream fos = new FileOutputStream(pictureFile);
+		            fos.write(data);
+		            fos.close();
+		        } catch (FileNotFoundException e) {
+		            Log.d(TAG, "File not found: " + e.getMessage());
+		        } catch (IOException e) {
+		            Log.d(TAG, "Error accessing file: " + e.getMessage());
+		        }
+		    }
+		};
+		
+		cameraVisibleShips = dataView.getDataHandler().getVisibleShips();
+		if(cameraVisibleShips.size() > 0){
+			camScreen.camera.takePicture(shutterCallback, null, mPicture);
+			String[] names = new String[cameraVisibleShips.size()];
+			for (int i = 0; i < names.length; i++) {
+				names[i] = cameraVisibleShips.get(i).getShipName();
+			}
+			CameraListDiaFragment dialog = new CameraListDiaFragment();
+			Bundle args = new Bundle();
+			args.putStringArray(CameraListDiaFragment.CAMERA_SEL_CHOICES, names);
+			dialog.setArguments(args);
+			dialog.show(getFragmentManager(), CameraListDiaFragment.CAMERA_SEL_CHOICES);
+		}
+		else{
+			Toast toast = Toast.makeText(this, getResources().getString(R.string.camera_no_visible), Toast.LENGTH_LONG); 
+			toast.show();
+		}
+	}
+	
+	
+	
+	public void storePhotoInfo(int n){
+		if(n > -1 && cameraVisibleShips.size() > 0){
+			CameraStorage.getInstance().storePhotoInfo(cameraVisibleShips.get(n));
+		}
+	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -681,22 +774,6 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 			
 		/* Search, replaced with sending a test message */
 		case 5:
-			/*
-			onSearchRequested();
-			*/
-			camScreen.camera.takePicture(null, null, mPicture);
-			/*
-			Thread th = new Thread(new Runnable() {
-				public void run() {
-					httpPost.postData();
-				}
-			});
-			th.start();
-			*/
-			break;
-			
-		/* GPS Information */
-		case 6:
 			Location currentGPSInfo = getMixViewData().getMixContext().getLocationFinder().getCurrentLocation();
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(getString(R.string.general_info_text) + "\n\n"
@@ -722,7 +799,7 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 			alert.show();
 			break;
 		/* Case 6: license agreements */
-		case 7:
+		case 6:
 			AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
 			builder1.setMessage(getString(R.string.license));
 			/* Retry */
@@ -1061,7 +1138,6 @@ public class MixView extends Activity implements SensorEventListener, OnTouchLis
 	public void ClearClickData(){
 		this.fragmentBundle = null;
 	}
-
 }
 
 

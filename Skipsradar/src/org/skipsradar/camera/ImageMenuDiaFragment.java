@@ -35,7 +35,8 @@ public class ImageMenuDiaFragment extends DialogFragment{
 		final Photo photo = ((PhotoView) getActivity()).getPhoto(id);
 		String[] options;
 		String desc;
-		boolean hasNoInfo = photo.getShipMmsi().equals(Photo.NO_INFO_MMSI); 
+		final boolean hasNoInfo = photo.getShipMmsi().equals(Photo.NO_INFO_MMSI);
+		final Activity context = getActivity();
 		if(hasNoInfo){
 			options = new String[]{getResources().getString(R.string.image_dia_menu_show), 
 					getResources().getString(R.string.image_dia_menu_delete)};
@@ -59,7 +60,28 @@ public class ImageMenuDiaFragment extends DialogFragment{
 					//TODO provide better/larger bitmap
 					showImageDialog(photo.getName(), getActivity());
 					break;
+				case 1:
+					/*
+					 * Here the image is deleted, after a comfirmation
+					 * dialog appears.
+					 */
+					new AlertDialog.Builder(getActivity())
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setTitle(R.string.image_dia_menu_delete)
+					.setMessage(R.string.image_dia_delete_alert)
+					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 
+			            @Override
+			            public void onClick(DialogInterface dialog, int which) {
+			
+			            	CameraStorage.deleteImage(photo.getName());
+			            	context.recreate();
+			            }
+
+			        })
+			        .setNegativeButton(R.string.no, null)
+			        .show();
+					break;
 				default:
 					break;
 				}
@@ -84,24 +106,32 @@ public void showImageDialog(String name, Activity context){
     			"/" + CameraStorage.imageFolder + "/" + name);
     	int bitmapHeight = bitmap.getHeight();
     	int bitmapWidth = bitmap.getWidth();
+    	System.out.println("Debug: Image Height: " + bitmapHeight);
+    	System.out.println("Debug: Image Width: " + bitmapWidth);
+    	System.out.println("Debug: Screen Height: " + screenHeight);
+    	System.out.println("Debug: Screen Width: " + screenWidth);
 
     	// Scale the image down to fit perfectly into the screen
     	// The value (250 in this case) must be adjusted for phone/tables displays
-    	while(bitmapHeight > (screenWidth - 10) || bitmapWidth > (screenHeight - 10)) {
+    	while(bitmapHeight > (screenHeight - 50) || bitmapWidth > (screenWidth - 50)) {
     	    bitmapHeight = (int) (bitmapHeight * 0.95);
     	    bitmapWidth = (int) (bitmapWidth * 0.95);
     	}
 
-    	System.out.println("Debug: bitmapX:" + bitmapWidth +  " compared to: " + screenHeight);
-    	System.out.println("Debug: bitmapY:" + bitmapHeight +  " compared to: " + screenWidth);
+    	//System.out.println("Debug: bitmapX:" + bitmapWidth +  " compared to: " + screenHeight);
+    	//System.out.println("Debug: bitmapY:" + bitmapHeight +  " compared to: " + screenWidth);
+    	
+    	BitmapDrawable resizedBitmap = new BitmapDrawable(context.getResources(), Bitmap.createScaledBitmap(bitmap, bitmapWidth, bitmapHeight, false));
+    	
     	// Create resized and rotated bitmap image
+    	/*If we wanted to rotate the image, which I tried with bad results
     	Matrix matrix = new Matrix();
     	matrix.postRotate(90);
     	Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap , bitmapWidth, bitmapHeight, true);
     	Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap , 0, 0, scaledBitmap .getWidth(), scaledBitmap .getHeight(), matrix, true);
     	
     	System.out.println("Debug: rotated: " + rotatedBitmap.getWidth() + " x " + rotatedBitmap.getHeight());
-    	
+    	*/
     	// Create dialog
     	Dialog dialog = new Dialog(context);
     	dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -110,8 +140,9 @@ public void showImageDialog(String name, Activity context){
     	ImageView image = (ImageView) dialog.findViewById(R.id.thumbnail_IMAGEVIEW);
 
     	// !!! Do here setBackground() instead of setImageDrawable() !!! //
-    	image.setBackground(new BitmapDrawable(getResources(), rotatedBitmap));
-
+    	//image.setBackground(new BitmapDrawable(getResources(), rotatedBitmap));
+    	image.setBackground(resizedBitmap);
+    	
     	// Without this line there is a very small border around the image (1px)
     	// In my opinion it looks much better without it, so the choice is up to you.
     	dialog.getWindow().setBackgroundDrawable(null);

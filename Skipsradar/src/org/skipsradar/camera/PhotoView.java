@@ -21,7 +21,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class PhotoView extends Activity{
 	
-	GridView gridview;
+	private GridView gridview;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,11 @@ public class PhotoView extends Activity{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-	    ((ImageAdapter)gridview.getAdapter()).setPhotos(CameraStorage.getInstance().getPhotos());
+	    refreshList();
+	}
+	
+	public void refreshList(){
+		((ImageAdapter)gridview.getAdapter()).setPhotos(CameraStorage.getInstance().getPhotos());
 	}
 	
 	public Photo getPhoto(int position){
@@ -60,7 +64,7 @@ public class PhotoView extends Activity{
 	class ImageAdapter extends BaseAdapter{
 
 		private Context ctx;
-		ArrayList<Photo> photos;
+		private ArrayList<Photo> photos;
 		
 		public ImageAdapter(Context ctx) {
 			this.ctx = ctx;

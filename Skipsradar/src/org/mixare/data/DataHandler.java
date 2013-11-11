@@ -26,7 +26,9 @@ import java.util.List;
 
 import org.mixare.MixContext;
 import org.mixare.MixView;
+import org.mixare.POIMarker;
 import org.mixare.lib.marker.Marker;
+import org.skipsradar.camera.Photo;
 
 import android.location.Location;
 import android.util.Log;
@@ -86,6 +88,23 @@ public class DataHandler {
 		for(Marker ma: markerList) {
 			ma.update(location);
 		}
+	}
+	
+	/**
+	 * Looks through the markers, and returns a list of
+	 * all visible markers. The photos that are
+	 * returned do not contain photo or filename.
+	 * @return ArrayList<Photo> conatining all visible ship's name and mmsi
+	 */
+	public ArrayList<Photo> getVisibleShips(){
+		ArrayList<Photo> ships = new ArrayList<Photo>();
+		for (int i = 0; i < markerList.size(); i++) {
+			Marker marker = markerList.get(i);
+			if(marker.isVisible() && (marker instanceof POIMarker)){
+				ships.add(new Photo(((POIMarker)marker).getMmsi(), marker.getTitle()));
+			}
+		}
+		return ships;
 	}
 	
 	/**

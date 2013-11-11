@@ -83,5 +83,7 @@ public interface Marker extends Comparable<Marker>{
 	
 	//Skipsradar addition; Added by Andreas 22.10.13 11:40
 	boolean isClickValid(float x, float y);
+	
+	boolean isVisible();
 
 }

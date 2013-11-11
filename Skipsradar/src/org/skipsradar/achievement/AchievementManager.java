@@ -77,7 +77,7 @@ public class AchievementManager {
 				 * toast message to let the user know.
 				 */
 				if(completed){
-					String text = R.string.achievement_complete + "\n" + achi.getName();
+					String text = ctx.getResources().getString(R.string.achievement_complete) + "\n" + achi.getName();
 					Toast toast = Toast.makeText(ctx, text, Toast.LENGTH_LONG); 
 					toast.show();
 				}

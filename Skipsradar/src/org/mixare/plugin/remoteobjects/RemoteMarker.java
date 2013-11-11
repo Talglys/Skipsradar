@@ -311,4 +311,10 @@ public class RemoteMarker implements Marker{
 		return false;
 	}
 
+	@Override
+	public boolean isVisible() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

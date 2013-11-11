@@ -173,4 +173,8 @@ public class POIMarker extends LocalMarker {
 		return super.listClick(x, y, ctx, state, ""+mmsi);
 	}
 
+	public String getMmsi(){
+		return ""+mmsi;
+	}
+	
 }
