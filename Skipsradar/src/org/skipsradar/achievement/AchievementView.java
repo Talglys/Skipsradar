@@ -28,6 +28,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * This is for displaying achievements, and is launched from MixView
+ * @author Andreas
+ *
+ */
 public class AchievementView extends ListActivity {
 	
 	public static final String SHARED_PREFS = "AchievementPrefs";
@@ -61,8 +66,8 @@ public class AchievementView extends ListActivity {
 	
 	private class AchievementAdapter extends BaseAdapter{
 		
-		private LayoutInflater mInflater;
-		private ArrayList<Achievement> achi;
+		private LayoutInflater mInflater; //Handles the xml layout
+		private ArrayList<Achievement> achi; //The achievements in the list
 
 		public AchievementAdapter() {
 			mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -126,7 +131,7 @@ public class AchievementView extends ListActivity {
 			String completion = completion(achi.get(position)) + " %";
 			holder.title.setText(achi.get(position).getName() + " - " + completion);
 			holder.desc.setText(achi.get(position).getDescription());
-			holder.icon.setImageResource(R.drawable.wikipedia);
+			holder.icon.setImageResource(R.drawable.ship);
 			holder.status.setChecked(achi.get(position).getCompleted());
 
 			return convertView;

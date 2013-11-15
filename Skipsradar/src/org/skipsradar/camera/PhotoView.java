@@ -19,6 +19,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
+/**
+ * This is the gallery, and is launched from MixView
+ * @author Andreas
+ *
+ */
 public class PhotoView extends Activity{
 	
 	private GridView gridview;
@@ -33,6 +38,7 @@ public class PhotoView extends Activity{
 	    gridview.setAdapter(new ImageAdapter(this));
 
 	    gridview.setOnItemClickListener(new OnItemClickListener() {
+	    	//Here is what happens when an image in the gallery is clicked.
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position,
 					long id) {

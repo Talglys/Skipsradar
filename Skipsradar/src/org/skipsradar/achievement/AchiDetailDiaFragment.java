@@ -6,6 +6,12 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
+/**
+ * This dialog appears when an achievement in AchievementView is clicked
+ * and displays information about ships.
+ * @author Andreas
+ *
+ */
 public class AchiDetailDiaFragment extends DialogFragment {
 	
 	public static final String DETAILS_STRING = "details";

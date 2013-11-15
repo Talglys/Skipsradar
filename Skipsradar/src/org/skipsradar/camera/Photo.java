@@ -2,6 +2,11 @@ package org.skipsradar.camera;
 
 import android.graphics.Bitmap;
 
+/**
+ * The photo class for storage of photo related information
+ * @author Andreas
+ *
+ */
 public class Photo {
 
 	public static final String NO_INFO_MMSI = "Null";

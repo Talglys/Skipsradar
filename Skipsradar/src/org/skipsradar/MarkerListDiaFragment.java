@@ -8,6 +8,12 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
+/**
+ * Lists the markers that are stacked, if the user happens
+ * to press a stack of markers.
+ * @author Andreas
+ *
+ */
 public class MarkerListDiaFragment extends DialogFragment {
 	
 	public static final String MARKER_SEL_CHOICES = "marker_sel_choices";
@@ -15,6 +21,8 @@ public class MarkerListDiaFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		//The ClickBundle is gotten from MixView, and contains important information
+		//related to the selection of markers.
 		ClickBundle bundle = ((MixView) getActivity()).getFragmentBundle();
 		if(!(bundle == null)){
 			String[] markerNames = new String[bundle.getMarkers().size()];
@@ -35,6 +43,8 @@ public class MarkerListDiaFragment extends DialogFragment {
 				
 			});
 		}
+		//If somehow the ClickBundle in MixView is empty,
+		//an error appears.
 		else{
 			builder.setTitle("Error")
 				.setMessage(R.string.marker_sel_error)

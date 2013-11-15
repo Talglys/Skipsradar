@@ -13,6 +13,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+/**
+ * Test class for sending an http post
+ * @author Andreas
+ *
+ */
 public class httpPost {
 
 	public static void postData() {

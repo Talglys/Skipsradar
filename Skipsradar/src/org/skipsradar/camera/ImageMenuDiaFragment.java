@@ -24,6 +24,12 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 
+/**
+ * Dialog with options that appears when an image is clicked in the
+ * gallery.
+ * @author Andreas
+ *
+ */
 public class ImageMenuDiaFragment extends DialogFragment{
 
 	public static final String IMAGE_ID = "image_id";
@@ -37,6 +43,8 @@ public class ImageMenuDiaFragment extends DialogFragment{
 		String desc;
 		final boolean hasNoInfo = photo.getShipMmsi().equals(Photo.NO_INFO_MMSI);
 		final Activity context = getActivity();
+		//If the image has no information attached, the user should not be able
+		//to upload it.
 		if(hasNoInfo){
 			options = new String[]{getResources().getString(R.string.image_dia_menu_show), 
 					getResources().getString(R.string.image_dia_menu_delete)};
@@ -56,7 +64,7 @@ public class ImageMenuDiaFragment extends DialogFragment{
     			// The 'which' argument contains the index position
     			// of the selected item
     			switch (which) {
-				case 0:
+				case 0: //Show image
 					//TODO provide better/larger bitmap
 					showImageDialog(photo.getName(), getActivity());
 					break;
@@ -82,6 +90,7 @@ public class ImageMenuDiaFragment extends DialogFragment{
 			        .setNegativeButton(R.string.no, null)
 			        .show();
 					break;
+				//TODO: Add case 2: for uploading an image
 				default:
 					break;
 				}
@@ -91,7 +100,14 @@ public class ImageMenuDiaFragment extends DialogFragment{
 		
 		return builder.create();
 	}
-	
+
+/**
+ * Shows an image as a dialog, without any borders.
+ * Taken from
+ * http://stackoverflow.com/questions/18110603/android-image-dialog-popup-same-size-as-image-and-no-border
+ * @param name
+ * @param context
+ */
 public void showImageDialog(String name, Activity context){
 
     	// Get screen size
@@ -106,20 +122,13 @@ public void showImageDialog(String name, Activity context){
     			"/" + CameraStorage.imageFolder + "/" + name);
     	int bitmapHeight = bitmap.getHeight();
     	int bitmapWidth = bitmap.getWidth();
-    	System.out.println("Debug: Image Height: " + bitmapHeight);
-    	System.out.println("Debug: Image Width: " + bitmapWidth);
-    	System.out.println("Debug: Screen Height: " + screenHeight);
-    	System.out.println("Debug: Screen Width: " + screenWidth);
 
     	// Scale the image down to fit perfectly into the screen
-    	// The value (250 in this case) must be adjusted for phone/tables displays
+    	// The value (50 in this case) must be adjusted for phone/tables displays
     	while(bitmapHeight > (screenHeight - 50) || bitmapWidth > (screenWidth - 50)) {
     	    bitmapHeight = (int) (bitmapHeight * 0.95);
     	    bitmapWidth = (int) (bitmapWidth * 0.95);
     	}
-
-    	//System.out.println("Debug: bitmapX:" + bitmapWidth +  " compared to: " + screenHeight);
-    	//System.out.println("Debug: bitmapY:" + bitmapHeight +  " compared to: " + screenWidth);
     	
     	BitmapDrawable resizedBitmap = new BitmapDrawable(context.getResources(), Bitmap.createScaledBitmap(bitmap, bitmapWidth, bitmapHeight, false));
     	
@@ -129,9 +138,8 @@ public void showImageDialog(String name, Activity context){
     	matrix.postRotate(90);
     	Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap , bitmapWidth, bitmapHeight, true);
     	Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap , 0, 0, scaledBitmap .getWidth(), scaledBitmap .getHeight(), matrix, true);
-    	
-    	System.out.println("Debug: rotated: " + rotatedBitmap.getWidth() + " x " + rotatedBitmap.getHeight());
     	*/
+    	
     	// Create dialog
     	Dialog dialog = new Dialog(context);
     	dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -149,18 +157,6 @@ public void showImageDialog(String name, Activity context){
     	
     	// Show the dialog
     	dialog.show();
-    	
-    	/*
-    	AlertDialog.Builder imageDialog = new AlertDialog.Builder(context);
-    	LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-    	View layout = inflater.inflate(R.layout.imagedialoglayout, null);
-    	ImageView image = (ImageView) layout.findViewById(R.id.thumbnail_IMAGEVIEW);
-    	image.setImageDrawable(bitmap);
-    	imageDialog.setView(layout);
-    	imageDialog.create();
-    	imageDialog.show();
-    	*/
     }
 	
 }

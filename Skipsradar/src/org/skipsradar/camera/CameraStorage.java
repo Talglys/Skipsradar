@@ -18,15 +18,21 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+/**
+ * This singleton class handles all storage and retrieval
+ * of photos.
+ * @author Andreas
+ *
+ */
 public class CameraStorage {
 
 	public static final int MEDIA_TYPE_IMAGE = 1;
 	public static final int MEDIA_TYPE_VIDEO = 2;
-	public static final String imageFolder = "Skipsradar";
+	public static final String imageFolder = "Skipsradar"; //The name of the folder
 	public static final String LAST_SAVED_IMAGE = "last_saved_image";
-	private static CameraStorage instance; 
+	private static CameraStorage instance; //Singleton instance
 	
-	Context ctx;
+	Context ctx; //The context for storage, which is used to get SharedPreferences
 	SharedPreferences settings;
 	
 	private CameraStorage(Context ctx) {
@@ -38,23 +44,35 @@ public class CameraStorage {
 		return instance;
 	}
 	
+	/**
+	 * Initializer. Call once in before
+	 * any other calls to this class.
+	 * @param ctx
+	 */
 	public static void initialize(Context ctx){
 		instance = new CameraStorage(ctx);
 	}
 
+	/**
+	 * Gets, from the designated folder, all jpg pictures, and their corresponding
+	 * information.
+	 * @return An arraylist of Photo elements.
+	 */
 	public ArrayList<Photo> getPhotos(){
 		File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + imageFolder);
 		File[] filesInFolder = folder.listFiles();
 		ArrayList<Photo> photos = new ArrayList<Photo>();
-		if(filesInFolder != null){
+		if(filesInFolder != null){ //If the folder is not empty
 			for (int i = 0; i < filesInFolder.length; i++) {
+				// Check to see if any files are directories
 				if(!filesInFolder[i].isDirectory()){
 					String[] extList = filesInFolder[i].getName().split("\\.");
 					String ext = extList[extList.length-1];
+					//Check to see if they're jpg images
 					if(ext.equals("jpg")){
 						//Form of image info:
 						//Name|mmsi|ShipName
-						System.out.println("Debug: filename:" + filesInFolder[i].getName());
+						//Retrieves information on this image.
 						String imgInfoString = settings.getString(
 								filesInFolder[i].getName(), "Null");
 						//If no info on the image is saved on the phone
@@ -79,11 +97,22 @@ public class CameraStorage {
 		return photos;
 	}
 	
+	/**
+	 * Gets the picture with the provided name from the folder, 
+	 * and scales it down so it's maximum height or width is
+	 * 800 px.
+	 * @param name
+	 * @return
+	 */
 	public Bitmap getLargeImage(String name){
 		return decodeSampledBitmapFromResource(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + imageFolder + "/" + name,
 				800, 800);
 	}
 	
+	/**
+	 * Deletes the image with the provided name from the folder.
+	 * @param name
+	 */
 	public static void deleteImage(String name){
 		File file = new File(Environment.getExternalStoragePublicDirectory(
 				Environment.DIRECTORY_PICTURES) + "/" + imageFolder + "/" + name);
@@ -102,6 +131,11 @@ public class CameraStorage {
 		editor.commit();
 	}
 	
+	/**
+	 * Stores the information (name and mmsi) contained in the provided photo
+	 * to the last photo taken.
+	 * @param photo
+	 */
 	public void storePhotoInfo(Photo photo){
 		String lsi = settings.getString(LAST_SAVED_IMAGE, "Null");
 		SharedPreferences.Editor editor = settings.edit();
